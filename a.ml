@@ -9,17 +9,17 @@ let l1 = 1.0
 let l2 = 1.0
 let g = 9.8
 
-let n_phi   = 0
-let n_theta = 1
-let n_mu    = 2
-let n_nu    = 3
-
 let x_ary = [|
   0.1 *. pi;  (* phi *)
   0.1 *. pi;  (* theta *)
   0.0;  (* mu = d_phi *)
   0.0;  (* nu = d_theta *)
 |]
+
+let n_phi   = 0
+let n_theta = 1
+let n_mu    = 2
+let n_nu    = 3
 
 let xdot_ary =
   let open Flop in

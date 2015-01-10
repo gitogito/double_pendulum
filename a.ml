@@ -23,6 +23,8 @@ let n_nu    = 3
 
 let xdot_ary =
   let open Flop in
+  let _a = (m1+m2)*l1**2.0 in
+  let _e = m2*l2 in
   [|
     (* phi *)
     (fun ~t ~x_ary ->
@@ -42,11 +44,9 @@ let xdot_ary =
        let mu = x_ary.(n_mu) in
        let nu = x_ary.(n_nu) in
 
-       let _a = (m1+m2)*l1**2.0 in
        let _b = m2*l1*l2*cos(phi-theta) in
        let _c = m2*l1*l2*sin(phi-theta) in
        let _d = (m1+m2)*g*l1*sin(phi) in
-       let _e = m2*l2 in
        let _f = m2*l1*l2*cos(phi-theta) in
        let _g = -m2*l1*l2*sin(phi-theta) in
        let _h = m2*g*l2*sin(theta) in
@@ -61,11 +61,9 @@ let xdot_ary =
        let mu = x_ary.(n_mu) in
        let nu = x_ary.(n_nu) in
 
-       let _a = (m1+m2)*l1**2.0 in
        let _b = m2*l1*l2*cos(phi-theta) in
        let _c = m2*l1*l2*sin(phi-theta) in
        let _d = (m1+m2)*g*l1*sin(phi) in
-       let _e = m2*l2 in
        let _f = m2*l1*l2*cos(phi-theta) in
        let _g = -m2*l1*l2*sin(phi-theta) in
        let _h = m2*g*l2*sin(theta) in

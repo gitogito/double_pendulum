@@ -23,8 +23,8 @@ let n_nu    = 3
 
 let xdot_ary =
   let open Flop in
-  let _a = (m1+m2)*l1**2.0 in
-  let _e = m2*l2 in
+  let c_a = (m1+m2)*l1**2.0 in
+  let c_e = m2*l2 in
   [|
     (* phi *)
     (fun ~t ~x_ary ->
@@ -44,13 +44,13 @@ let xdot_ary =
        let mu = x_ary.(n_mu) in
        let nu = x_ary.(n_nu) in
 
-       let _b = m2*l1*l2*cos(phi-theta) in
-       let _c = m2*l1*l2*sin(phi-theta) in
-       let _d = (m1+m2)*g*l1*sin(phi) in
-       let _f = m2*l1*l2*cos(phi-theta) in
-       let _g = -m2*l1*l2*sin(phi-theta) in
-       let _h = m2*g*l2*sin(theta) in
-       -1.0/(_a*_e-_f*_b) * (_c*_e*nu**2.0 - _g*_b*mu**2.0 + _d*_e - _h*_b)
+       let c_b = m2*l1*l2*cos(phi-theta) in
+       let c_c = m2*l1*l2*sin(phi-theta) in
+       let c_d = (m1+m2)*g*l1*sin(phi) in
+       let c_f = m2*l1*l2*cos(phi-theta) in
+       let c_g = -m2*l1*l2*sin(phi-theta) in
+       let c_h = m2*g*l2*sin(theta) in
+       -1.0/(c_a*c_e-c_f*c_b) * (c_c*c_e*nu**2.0 - c_g*c_b*mu**2.0 + c_d*c_e - c_h*c_b)
     );
 
     (* nu *)
@@ -61,13 +61,13 @@ let xdot_ary =
        let mu = x_ary.(n_mu) in
        let nu = x_ary.(n_nu) in
 
-       let _b = m2*l1*l2*cos(phi-theta) in
-       let _c = m2*l1*l2*sin(phi-theta) in
-       let _d = (m1+m2)*g*l1*sin(phi) in
-       let _f = m2*l1*l2*cos(phi-theta) in
-       let _g = -m2*l1*l2*sin(phi-theta) in
-       let _h = m2*g*l2*sin(theta) in
-       -1.0/(_b*_f-_e*_a) * (_c*_f*nu**2.0 - _g*_a*mu**2.0 + _d*_f - _h*_a)
+       let c_b = m2*l1*l2*cos(phi-theta) in
+       let c_c = m2*l1*l2*sin(phi-theta) in
+       let c_d = (m1+m2)*g*l1*sin(phi) in
+       let c_f = m2*l1*l2*cos(phi-theta) in
+       let c_g = -m2*l1*l2*sin(phi-theta) in
+       let c_h = m2*g*l2*sin(theta) in
+       -1.0/(c_b*c_f-c_e*c_a) * (c_c*c_f*nu**2.0 - c_g*c_a*mu**2.0 + c_d*c_f - c_h*c_a)
     );
 |]
 

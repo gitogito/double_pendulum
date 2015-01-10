@@ -3,15 +3,15 @@ open ExtLib
 
 let pi = 4.0 *. atan 1.0
 
-let m1 = 1.0
+let m1 = 1.7
 let m2 = 1.0
 let l1 = 1.0
 let l2 = 1.0
 let g = 9.8
 
 let x_ary = [|
-  0.1 *. pi;  (* phi *)
-  0.1 *. pi;  (* theta *)
+  0.99 *. pi;  (* phi *)
+  0.5 *. pi;  (* theta *)
   0.0;  (* mu = d_phi *)
   0.0;  (* nu = d_theta *)
 |]
@@ -91,7 +91,7 @@ let loop n dt ode =
   aux 0
 
 let () =
-  let n = 1000 in
-  let dt = 0.1 in
+  let n = 1000000 in
+  let dt = 0.001 in
   let ode = Orddiff.Rk4.init ~dt ~x_ary ~xdot_ary in
   loop n dt ode

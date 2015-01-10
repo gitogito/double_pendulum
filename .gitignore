@@ -1,0 +1,7 @@
+._d
+*.annot
+*.cmi
+*.cmt
+*.cmx
+*.o
+a.out

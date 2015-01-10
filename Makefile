@@ -7,7 +7,7 @@ THREADS =
 ANNOTATE = yes
 OCAMLFLAGS = -bin-annot -w A-44
 
-all: debug-code
+all: native-code
 
 export OCAMLMAKEFILE = ~/src/ocamlmakefile/OCamlMakefile
 include $(OCAMLMAKEFILE)

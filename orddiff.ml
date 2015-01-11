@@ -1,7 +1,7 @@
 module Base = struct
   type t = {
     update : unit -> unit;
-    get_x_ary : unit -> float array;
+    get_t : unit -> float;
   }
 end
 
@@ -10,30 +10,37 @@ module Euler = struct
 
   type t' = {
     dt : float;
+    dxdt : float -> float array -> float array -> unit;
+    xs : float array;
     mutable n : int;
-    mutable x_ary : float array;
-    xdot_ary : (t:float -> x_ary:float array -> float) array;
+    fs : float array;
   }
 
   let update self () =
     let t = self.dt *. float self.n in
-    self.x_ary <- Array.mapi
-                    (fun i x -> x +. (self.xdot_ary.(i) ~t ~x_ary:self.x_ary) *. self.dt)
-                    self.x_ary;
+    self.dxdt t self.xs self.fs;
+    Array.iteri
+      (fun i x ->
+         self.xs.(i) <- x +. self.fs.(i) *. self.dt)
+      self.xs;
     self.n <- self.n + 1
 
-  let get_x_ary self () =
-    self.x_ary
+  let get_t self () =
+    self.dt *. float self.n
 
-  let init ~dt ~x_ary ~xdot_ary =
+  let init ~dt ~dxdt ~xs =
+    let order = Array.length xs in
     let self = {
       dt;
+      dxdt;
+      xs;
       n = 0;
-      x_ary;
-      xdot_ary;
+      fs = Array.make order 0.0;
     } in
-    { update = update self;
-      get_x_ary = get_x_ary self; }
+    {
+      update = update self;
+      get_t = get_t self;
+    }
 end
 
 module Rk4 = struct
@@ -41,66 +48,53 @@ module Rk4 = struct
 
   type t' = {
     dt : float;
+    dxdt : float -> float array -> float array -> unit;
+    xs : float array;
     mutable n : int;
-    mutable x_ary : float array;
-    xdot_ary : (t:float -> x_ary:float array -> float) array;
-    order : int;
-    mutable f1_ary : float array;
-    mutable f2_ary : float array;
-    mutable f3_ary : float array;
-    mutable f4_ary : float array;
+    f1s : float array;
+    f2s : float array;
+    f3s : float array;
+    f4s : float array;
     dt2 : float;
   }
 
   let update self () =
     let t = self.dt *. float self.n in
-
-    for i = 0 to self.order - 1 do
-      self.f1_ary.(i) <- self.xdot_ary.(i) ~t ~x_ary:self.x_ary
-    done;
-
-    let x_ary = Array.mapi (fun i x -> x +. self.dt2 *. self.f1_ary.(i)) self.x_ary in
-    for i = 0 to self.order - 1 do
-      self.f2_ary.(i) <- self.xdot_ary.(i) ~t:(t +. self.dt2) ~x_ary
-    done;
-
-    let x_ary = Array.mapi (fun i x -> x +. self.dt2 *. self.f2_ary.(i)) self.x_ary in
-    for i = 0 to self.order - 1 do
-      self.f3_ary.(i) <- self.xdot_ary.(i) ~t:(t +. self.dt2) ~x_ary
-    done;
-
-    let x_ary = Array.mapi (fun i x -> x +. self.dt *. self.f3_ary.(i)) self.x_ary in
-    for i = 0 to self.order - 1 do
-      self.f4_ary.(i) <- self.xdot_ary.(i) ~t:(t +. self.dt) ~x_ary
-    done;
-
-    for i = 0 to self.order - 1 do
-      let f1 = self.f1_ary.(i) in
-      let f2 = self.f2_ary.(i) in
-      let f3 = self.f3_ary.(i) in
-      let f4 = self.f4_ary.(i) in
-      self.x_ary.(i) <- self.x_ary.(i) +. self.dt /. 6.0 *. (f1 +. 2.0 *. f2 +. 2.0 *. f3 +. f4)
-    done;
-
+    self.dxdt t self.xs self.f1s;
+    let xs' = Array.mapi (fun i x -> x +. self.dt2 *. self.f1s.(i)) self.xs in
+    self.dxdt (t +. self.dt2) xs' self.f2s;
+    let xs' = Array.mapi (fun i x -> x +. self.dt2 *. self.f2s.(i)) self.xs in
+    self.dxdt (t +. self.dt2) xs' self.f3s;
+    let xs' = Array.mapi (fun i x -> x +. self.dt *. self.f3s.(i)) self.xs in
+    self.dxdt (t +. self.dt) xs' self.f4s;
+    Array.iteri
+      (fun i x ->
+         let f1 = self.f1s.(i) in
+         let f2 = self.f2s.(i) in
+         let f3 = self.f3s.(i) in
+         let f4 = self.f4s.(i) in
+         self.xs.(i) <- x +. self.dt /. 6.0 *. (f1 +. 2.0 *. f2 +. 2.0 *. f3 +. f4))
+      self.xs;
     self.n <- self.n + 1
 
-  let get_x_ary self () =
-    self.x_ary
+  let get_t self () =
+    self.dt *. float self.n
 
-  let init ~dt ~x_ary ~xdot_ary =
-    let order = Array.length x_ary in
+  let init ~dt ~dxdt ~xs =
+    let order = Array.length xs in
     let self = {
       dt;
+      dxdt;
+      xs;
       n = 0;
-      x_ary;
-      xdot_ary;
-      order;
-      f1_ary = Array.make order 0.0;
-      f2_ary = Array.make order 0.0;
-      f3_ary = Array.make order 0.0;
-      f4_ary = Array.make order 0.0;
-      dt2 = dt /. 2.0
+      f1s = Array.make order 0.0;
+      f2s = Array.make order 0.0;
+      f3s = Array.make order 0.0;
+      f4s = Array.make order 0.0;
+      dt2 = dt /. 2.0;
     } in
-    { update = update self;
-      get_x_ary = get_x_ary self; }
+    {
+      update = update self;
+      get_t = get_t self;
+    }
 end

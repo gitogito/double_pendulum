@@ -77,8 +77,7 @@ let () =
   let l1 = 1.0 in
   let l2 = 1.0 in
   Enum.iteri
-    (fun i (t, phi, theta) ->
-       ignore t;
+    (fun i (_t, phi, theta) ->
        if i mod 10 = 0 then begin
          let open Flop in
          let x1 = l1 * sin phi in

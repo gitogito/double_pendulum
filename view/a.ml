@@ -61,13 +61,6 @@ let get_minmax ary =
   in
   (xmin, xmax, ymin, ymax)
 
-let rec mydelay sec =
-  try
-    Thread.delay sec
-  with
-    Unix.Unix_error (Unix.EINTR, "select", "") ->
-      mydelay sec
-
 let () =
   let g = MyGraphics.init " 500x500" in
   Graphics.auto_synchronize false;
@@ -100,7 +93,7 @@ let () =
          Graphics.set_color (Graphics.rgb 255 0 0);
          MyGraphics.lineto g x2 y2;
          Graphics.synchronize ();
-         mydelay 0.002
+         Mylib.delay 0.002
        end
     )
     enum
